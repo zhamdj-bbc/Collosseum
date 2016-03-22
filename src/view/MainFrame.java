@@ -1,4 +1,4 @@
-package view;
+package View;
 
 import java.awt.BorderLayout;
 import javax.swing.*;
@@ -55,11 +55,5 @@ public class MainFrame extends JFrame {
 		
 		add(actionButtonRight, BorderLayout.EAST);
 	}
-	
-	//Main Method
-	public static void main(String[] args) {
-		MainFrame gui = new MainFrame();
-		gui.setSize(1920, 1080);
-		gui.setVisible(true);
-	}
+
 }
