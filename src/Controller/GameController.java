@@ -31,19 +31,20 @@ public class GameController {
 		};
 	}
 	
+	
+*/
+	
 	public static void main(String[] args) {
 		MainFrame gui = new MainFrame();
 		gui.setSize(1920, 1080);
 		gui.setVisible(true);
 		gui.setResizable(false);
 		
-		!START		actionPerformed(enum)? -> actionButton()
-		
-		handleActionButton(turnOne Ergebnis);
-		
-		analyzeHP
+//		!START		actionPerformed(enum)? -> actionButton()
+//		
+//		handleActionButton(turnOne Ergebnis);
+//		
+//		analyzeHP
 	}
-	
-*/
 
 }
