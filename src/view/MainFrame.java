@@ -1,5 +1,9 @@
 package View;
 
+import Model.Fighter;
+import Model.BodyPart;
+import Controller.GameController;
+
 import java.awt.BorderLayout;
 import java.awt.ComponentOrientation;
 import java.awt.FlowLayout;
@@ -146,6 +150,14 @@ public class MainFrame extends JFrame {
 		
 //		___________________________________________
 		
+		
+		/**START */
+		
+		actionPerformed  -> handleAction(BodyPart, Fighter);
+
+		swapButtons();
+		
+		handleAction(BodyPart, Fighter);
 		
 	}
 

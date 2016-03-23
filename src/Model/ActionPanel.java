@@ -10,7 +10,7 @@ public class ActionPanel {
 	public void actionButton() {
 //		switch(enum){
 //		case head ...
-//	
+//
 //		case torso ...
 //			
 //		case legs:

@@ -1,63 +1,59 @@
 package Model;
 
-public class FighterStatus {
+import Controller.GameController;
+
+public class FighterStatus{
 	
-	private String name;
-	private int health = 30;
+	private String name1 = "Gian";
+	private String name2 = "Jamil";
+	private String name3 = "Giamil";
+	
+	private int healthLeft = 30;
+	private int healthRight = 30;
+	
 	private int crit = 5;
 	private int hit = 1;
-	private String image;
-	private boolean isDead = false;
+	
+	private boolean isDeadLeft = false;
+	private boolean isDeadRight = false;
 	
 	
-	
-	public void attack(FighterStatus one) {
-//       if( one.defend(true) ) {
-//    	   one.lessDamage(hit);
-//       }
-//       else {
-//    	   one.fullDamage(crit);
-//       }
+	public void attack() {
+		if (String.equals(enumListOne[0], enumListTwo[0])){
+			lessDamage();
+		}
+		else {
+			fullDamage();
+		}
     }
 	
-	public void defend(FighterStatus one){
-		// if Attack BodyPart = Defend BodyPart
-		// return true;
-	}
-	
-	public void fullDamage(int strenght) {
-        if(health - crit <= 0) {
-            isDead = true;
-        }
-        else {
-            health -= crit;
-        }
+	public void fullDamage() {
+		if (String.equals(enumOne[1], Fighter.LEFT)){
+			healthRight -= crit;
+	        if(healthRight <= 0) {
+	            isDeadRight = true;
+	        }
+	     else {
+	         healthLeft -= crit;
+	         if(healthLeft <= 0) {
+		            isDeadLeft = true;
+	        }	
+		}
     }
 	
-	public void lessDamage(int strenght) {
-        if(health - hit <= 0) {
-            isDead = true;
-        }
-        else {
-            health -= hit;
-        }
+	public void lessDamage() {
+		if (String.equals(enumOne[1], Fighter.LEFT)){
+			healthRight -= hit;
+	        if(healthRight <= 0) {
+	            isDeadRight = true;
+	        }
+	     else {
+	         healthLeft -= hit;
+	         if(healthLeft <= 0) {
+		            isDeadLeft = true;
+	        }	
+		}
     }
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public int getHealth() {
-		return health;
-	}
-
-	public void setHealth(int health) {
-		this.health = health;
-	}
 
 	public int getCrit() {
 		return crit;
@@ -74,13 +70,22 @@ public class FighterStatus {
 	public void setHit(int hit) {
 		this.hit = hit;
 	}
+	
 
-	public String getImage() {
-		return image;
+	public int getHealthLeft() {
+		return healthLeft;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setHealthLeft(int healthLeft) {
+		this.healthLeft = healthLeft;
+	}
+
+	public int getHealthRight() {
+		return healthRight;
+	}
+
+	public void setHealthRight(int healthRight) {
+		this.healthRight = healthRight;
 	}
 
 	public boolean isDead() {
