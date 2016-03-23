@@ -2,27 +2,23 @@ package View;
 
 import Model.BodyPart;
 import Model.Fighter;
+import Controller.GameController;
 
 public class MainFrameSchmelze {
 	
 //	GIAN CODE
 
-/**	
-
-	public void handleAction(BodyPart, Fighter) {
-		
-	}
-
 
 
 	public static void main(String[] args) {
 		
-	START actionPerformed -> handleAction
+	handleAction(BodyPart, Fighter);
 
+	swap();
 
 	}
 	
-*/
+
 
 }
 

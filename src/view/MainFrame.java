@@ -137,5 +137,16 @@ public class MainFrame extends JFrame {
 		}
 		return new JLabel(new ImageIcon(resource));
 	}
+	
+	public static void main(String[] args) {
+		MainFrame gui = new MainFrame();
+		gui.setSize(1920, 1080);
+		gui.setVisible(true);
+		gui.setResizable(false);
+		
+//		___________________________________________
+		
+		
+	}
 
 }
