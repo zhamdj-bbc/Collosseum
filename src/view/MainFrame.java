@@ -153,11 +153,11 @@ public class MainFrame extends JFrame {
 		
 		/**START */
 		
-		actionPerformed  -> handleAction(BodyPart, Fighter);
+//		actionPerformed  -> handleAction(BodyPart, Fighter);
 
-		swapButtons();
-		
-		handleAction(BodyPart, Fighter);
+//		swapButtons();
+//		
+//		handleAction(BodyPart, Fighter);
 		
 	}
 
