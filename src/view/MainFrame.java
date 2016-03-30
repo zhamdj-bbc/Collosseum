@@ -1,17 +1,17 @@
 package View;
 
 import java.awt.BorderLayout;
-import java.awt.ComponentOrientation;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,11 +19,23 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JToolBar;
-import javax.swing.SpringLayout.Constraints;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+
+import Controller.GameController;
+import Model.EnumBodyPart;
+import Model.EnumFighter;
+import View.MainFrame.State;
 
 public class MainFrame extends JFrame {
 
+	public enum State
+	{
+		WaitForLeftAttack,
+		WaitForRightDefense,
+		WaitForRightAttack,
+		WaitForLeftDefense,	
+	}
 	
 	// JPanels
 	private JPanel dropDownMenu 			= new JPanel();
@@ -39,6 +51,7 @@ public class MainFrame extends JFrame {
 	private JPanel verticalRight			= new JPanel();
 	private JPanel hpPanelLeft				= new JPanel();
 	private JPanel hpPanelRight				= new JPanel();
+	private State currentState;
 	
 	// Lists & Combo Boxes for dropDownMenu
 	String[] playermodel1 					= { "Katharina", "Thellux", "Taeljam" };
@@ -48,27 +61,22 @@ public class MainFrame extends JFrame {
 	private JComboBox player1 				= new JComboBox(playermodel1);
 	private JComboBox player2 				= new JComboBox(playermodel2);
 	private JComboBox arena 				= new JComboBox(backgrounds);
-	
 
 	// Buttons for actionButtonLeft
 	private JButton headLeft 				= new JButton();
 	private JButton torsoLeft 				= new JButton();
 	private JButton legsLeft 				= new JButton();
-	
-	
-
-	
+		
 	// Buttons for actionButtonRight
 	private JButton headRight 				= new JButton();
 	private JButton torsoRight 				= new JButton();
 	private JButton legsRight 				= new JButton();
 
-	
 	// Progress Bars for hpBar
 	private JProgressBar hpBarLeft 			= new JProgressBar(0, 50);
 	private JProgressBar hpBarRight 		= new JProgressBar(0, 50);
 
-	
+
 	// Loading Images
 	private JLabel fighterLeftImage 		= loadJLabel("/characters/katharina.png");
 	private JLabel fighterRightImage 		= loadJLabel("/characters/rufus.png");
@@ -79,7 +87,7 @@ public class MainFrame extends JFrame {
 	private JLabel headSymbolRight 			= loadJLabel("/symbols/empty.png");
 	private JLabel torsoSymbolRight 		= loadJLabel("/symbols/shield.png");
 	private JLabel legsSymbolRight 			= loadJLabel("/symbols/empty.png");
-	
+
 	private JLabel hpBarVerticalBlind		= loadJLabel("/symbols/hpBarVerticalBlind.png");
 	private JLabel hpBarHorizontalBlind01	= loadJLabel("/symbols/hpBarHorizontalBlind.png");
 	private JLabel hpBarHorizontalBlind02	= loadJLabel("/symbols/hpBarHorizontalBlind.png");
@@ -87,7 +95,7 @@ public class MainFrame extends JFrame {
 	private JLabel hpBarHorizontalBlind04	= loadJLabel("/symbols/hpBarHorizontalBlind.png");
 
 	private JLabel background 				= loadJLabel("/backgrounds/space.jpg");
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private BufferedImage headLeftIcon;
 	private BufferedImage headRightIcon;
@@ -95,16 +103,127 @@ public class MainFrame extends JFrame {
 	private BufferedImage torsoRightIcon;
 	private BufferedImage legsLeftIcon;
 	private BufferedImage legsRightIcon;
+	private GameController gameController;
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	// Adding Buttons to Panels and Panels to MainFrame
 	
+	// Adding Buttons to Panels and Panels to MainFrame
 	public MainFrame() {
+
+		this.gameController = new GameController(this); 
+		this.gameController.startBattle(EnumFighter.LEFT);
+		currentState = State.WaitForLeftAttack;
+		
+		this.setButtonAccessibility(currentState);
+		
+		ActionListener fightButtonActionListener = new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+            	JButton button = (JButton)event.getSource();
+
+            	EnumFighter currentFighter = gameController.getCurrentFighter();
+
+            	EnumBodyPart bodyPart = null;
+            	boolean leftButtonsClicked = false;
+            	
+            	
+            	if (button.getName() == "headLeft")
+            	{
+            		bodyPart = EnumBodyPart.HEAD;
+            		leftButtonsClicked = true;
+            	}
+            	else if (button.getName() == "torsoLeft")
+            	{
+            		bodyPart = EnumBodyPart.TORSO;
+            		leftButtonsClicked = true;
+            	}
+            	else if (button.getName() == "legsLeft")
+            	{
+            		bodyPart = EnumBodyPart.LEGS;
+            		leftButtonsClicked = true;
+            	}
+            	else if (button.getName() == "headRight")
+            	{
+            		bodyPart = EnumBodyPart.HEAD;
+            		leftButtonsClicked = false;
+            	}
+            	else if (button.getName() == "torsoRight")
+            	{
+            		bodyPart = EnumBodyPart.TORSO;
+            		leftButtonsClicked = false;
+            	}
+            	else if (button.getName() == "legsRight")
+            	{
+            		bodyPart = EnumBodyPart.LEGS;
+            		leftButtonsClicked = false;
+            	}
+            	else
+            	{
+            		return;
+            	}
+            	
+        		if (currentFighter == EnumFighter.LEFT && leftButtonsClicked)
+        		{
+        			gameController.setAttack(bodyPart);
+        		}
+        		else if (currentFighter == EnumFighter.LEFT && leftButtonsClicked == false)
+        		{
+        			gameController.setDefense(bodyPart);
+        			gameController.handleBattle();
+        			hpBarLeft.setValue(gameController.getHealthFromRightFighter());
+        			repaint();
+        			gameController.startBattle(EnumFighter.RIGHT);
+        		}
+        		else if (currentFighter == EnumFighter.RIGHT && leftButtonsClicked == false)
+        		{
+        			gameController.setAttack(bodyPart);
+        		}
+        		else if (currentFighter == EnumFighter.RIGHT && leftButtonsClicked)
+        		{
+        			gameController.setDefense(bodyPart);
+        			gameController.handleBattle();
+        			hpBarRight.setValue(gameController.getHealthFromLeftFighter());
+        			repaint();
+        			gameController.startBattle(EnumFighter.LEFT);
+        		}
+        		
+        		currentState = this.getNextState();
+        		setButtonAccessibility(currentState);
+            }
+
+			private State getNextState() {
+
+				switch (currentState) {
+					case WaitForLeftAttack:
+						return State.WaitForRightDefense;
+					case WaitForRightDefense:
+						return State.WaitForRightAttack;
+					case WaitForRightAttack:
+						return State.WaitForLeftDefense;
+					case WaitForLeftDefense:
+						return State.WaitForLeftAttack;
+				}
+				
+				throw new RuntimeException("Invalid State!");
+			}
+        };
+
+            
+		headLeft.setName("headLeft");
+		torsoLeft.setName("torsoLeft");
+		legsLeft.setName("legsLeft");
+		headRight.setName("headRight");
+		torsoRight.setName("torsoRight");
+		legsRight.setName("legsRight");
+        
+		headLeft.addActionListener(fightButtonActionListener);
+		torsoLeft.addActionListener(fightButtonActionListener);
+		legsLeft.addActionListener(fightButtonActionListener);
+		headRight.addActionListener(fightButtonActionListener);
+		torsoRight.addActionListener(fightButtonActionListener);
+		legsRight.addActionListener(fightButtonActionListener);
 		
 		// Default Implementations
 		setTitle						("Collosseum");
 		setDefaultCloseOperation		(EXIT_ON_CLOSE);
-
 		
 		// Layout Settings
 		dropDownMenu.setLayout			(new FlowLayout(FlowLayout.LEFT));
@@ -130,8 +249,8 @@ public class MainFrame extends JFrame {
 		southPanelRight.setOpaque		(false);
 		verticalRight.setLayout			(new BoxLayout(verticalRight, BoxLayout.Y_AXIS));
 		verticalRight.setOpaque			(false);
-		hpBarLeft.setValue				(50);
-		hpBarRight.setValue				(50);
+		hpBarLeft.setValue				(gameController.getHealthFromLeftFighter());
+		hpBarRight.setValue				(gameController.getHealthFromRightFighter());
 		headLeft.setOpaque				(false);
 		headRight.setOpaque				(false);
 		torsoLeft.setOpaque				(false);
@@ -195,6 +314,16 @@ public class MainFrame extends JFrame {
 		hpPanelRight.add					(hpBarRight, BorderLayout.CENTER);
 		hpPanelRight.add					(hpBarHorizontalBlind04, BorderLayout.EAST);
 		
+		Border HPBorder = new LineBorder(Color.DARK_GRAY, 2);
+		
+		hpBarLeft.setForeground(Color.GREEN);
+		hpBarLeft.setBackground(Color.LIGHT_GRAY);
+		hpBarLeft.setBorder(HPBorder);
+		
+		hpBarRight.setForeground(Color.GREEN);
+		hpBarRight.setBackground(Color.LIGHT_GRAY);
+		hpBarRight.setBorder(HPBorder);
+		
 		
 		// adding HP Panels, Fighters and Action Symbols to battle
 		battle.add						(hpBarVerticalBlind, BorderLayout.NORTH);
@@ -217,7 +346,6 @@ public class MainFrame extends JFrame {
 
 		add								(battle, BorderLayout.CENTER);
 
-		
 		// adding Inputs to VerticalRight and southPanelRight
 		verticalRight.add				(headRight);
 		verticalRight.add				(torsoRight);
@@ -227,7 +355,33 @@ public class MainFrame extends JFrame {
 
 	}	
 	
-	
+	private void setButtonAccessibility(State currentState2) {
+		switch (currentState) {
+		case WaitForLeftAttack:
+		case WaitForLeftDefense:
+			
+			headRight.setEnabled(false);
+			torsoRight.setEnabled(false);
+			legsRight.setEnabled(false);
+			headLeft.setEnabled(true);
+			torsoLeft.setEnabled(true);
+			legsLeft.setEnabled(true);
+			
+			break;
+		case WaitForRightDefense:
+		case WaitForRightAttack:
+			
+			headRight.setEnabled(true);
+			torsoRight.setEnabled(true);
+			legsRight.setEnabled(true);
+			headLeft.setEnabled(false);
+			torsoLeft.setEnabled(false);
+			legsLeft.setEnabled(false);
+			
+			break;
+		}
+	}
+
 	//Abkürzung für Image Loader
 	private static JLabel loadJLabel(String iconName) {
 		final URL resource = MainFrame.class.getResource("/images/" + iconName);
@@ -251,9 +405,6 @@ public class MainFrame extends JFrame {
 		gui.setLocationRelativeTo(null);
 		gui.setSize(399, 399);
 		gui.setSize(1920, 1080);
-
-		// ___________________________________________
-
 	}
 
 }

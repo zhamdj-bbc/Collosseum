@@ -1,75 +1,72 @@
 package Controller;
 
 import View.MainFrame;
-import Model.FighterStatus;
-import Model.ActionPanel;
-import Model.BodyPart;
+import View.MainFrame.State;
+import Model.Battle;
+import Model.EnumBodyPart;
+import Model.EnumFighter;
 import Model.Fighter;
 
 public class GameController {
-	
-	private String[] enumListOne;
-	
-	private String[] enumListTwo;
-	
-	private boolean checkEnum = true;
-	
-	
-	public void handleAction(BodyPart, Fighter) {
-		if (checkEnum = true) {
-			enumListOne = BodyPart + Fighter;
-			checkEnum = false;
-		}
-		else {
-			enumListTwo = BodyPart + Fighter;
-			checkEnum = true;
-			attack(enumListOne, enumListTwo);
-			analyzeHP();
-			if (FighterStatus.isDeadLeft = true){
-//				showVictoryPopUpRight;
-			}
-			else if (FighterStatus.isDeadRight = true){
-//				showVictoryPopUpLeft;			
-			}
-			else {
-				swap();
-			};
-		}
-	} 
-	
-	public void swapButtons() {
+
+	private Fighter leftFighter;
+	private Fighter rightFighter;
+	private Battle battle;
+	private MainFrame mainFrame;
+
+	public GameController(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
+		leftFighter = new Fighter();
+		rightFighter = new Fighter();
+	}
+
+	public void startBattle(EnumFighter firstFighter) {
 		
-	}
-	
-	public void analyzeHP() {
-		if (String.equals(enumOne[1], Fighter.LEFT)){
-	        JProgressBar.left = FighterStatus.healthLeft;
-	        }
-	     else {
-	        JProgressBar.right = FighterStatus.healthRight;
-	     }
+		EnumFighter opponent;
+		if (firstFighter == EnumFighter.LEFT)
+		{
+			opponent = EnumFighter.RIGHT;
+		}
+		else
+		{
+			opponent = EnumFighter.LEFT;
+		}
 		
+		battle = new Battle(opponent);
+	}
+
+	public void setAttack(EnumBodyPart bodyPart) {
+		battle.setAttackBodyPart(bodyPart);
+	}
+
+	public void setDefense(EnumBodyPart bodyPart) {
+		battle.setDefenseBodyPart(bodyPart);
+	}
+
+	public void handleBattle() {
+		if (!battle.isReadyForRumble()) {
+			throw new RuntimeException("Battle is not ready for attack");
+		}
+		if (battle.getOpponent() == EnumFighter.LEFT) {
+			leftFighter.getAttacked(battle);
+		} else {
+			rightFighter.getAttacked(battle);
+		}
+	}
+
+	public EnumFighter getCurrentFighter() {
+		if (battle.getOpponent() == EnumFighter.LEFT) {
+			return EnumFighter.RIGHT;
+		} else {
+			return EnumFighter.LEFT;
+		}
 	}
 	
+	public int getHealthFromLeftFighter() {
+		return leftFighter.getHealth();
+	}
 	
-	public String[] getEnumListOne() {
-		return enumListOne;
+	public int getHealthFromRightFighter() {
+		return rightFighter.getHealth();
 	}
-
-	public void setEnumOne(String[] enumListOne) {
-		this.enumListOne = enumListOne;
-	}
-
-	public String[] getEnumTwo() {
-		return enumListTwo;
-	}
-
-
-	public void setEnumTwo(String[] enumListTwo) {
-		this.enumListTwo = enumListTwo;
-	}
-
-	
-
-
 }

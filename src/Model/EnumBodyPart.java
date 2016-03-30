@@ -1,6 +1,6 @@
 package Model;
 
-public enum BodyPart {
+public enum EnumBodyPart {
 	
 	HEAD, TORSO, LEGS
 
