@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -168,9 +170,14 @@ public class MainFrame extends JFrame {
         		{
         			gameController.setDefense(bodyPart);
         			gameController.handleBattle();
-        			hpBarLeft.setValue(gameController.getHealthFromRightFighter());
+        			hpBarRight.setValue(gameController.getHealthFromRightFighter());
         			repaint();
         			gameController.startBattle(EnumFighter.RIGHT);
+        			try {
+        			    Thread.sleep(1000);                 //1000 milliseconds is one second.
+        			} catch(InterruptedException ex) {
+        			    Thread.currentThread().interrupt();
+        			}
         		}
         		else if (currentFighter == EnumFighter.RIGHT && leftButtonsClicked == false)
         		{
@@ -180,9 +187,14 @@ public class MainFrame extends JFrame {
         		{
         			gameController.setDefense(bodyPart);
         			gameController.handleBattle();
-        			hpBarRight.setValue(gameController.getHealthFromLeftFighter());
+        			hpBarLeft.setValue(gameController.getHealthFromLeftFighter());
         			repaint();
         			gameController.startBattle(EnumFighter.LEFT);
+        			try {
+        			    Thread.sleep(1000);                 //1000 milliseconds is one second.
+        			} catch(InterruptedException ex) {
+        			    Thread.currentThread().interrupt();
+        			}
         		}
         		
         		currentState = this.getNextState();
@@ -206,6 +218,11 @@ public class MainFrame extends JFrame {
 			}
         };
 
+        ItemListener comboBoxListenerPlayer1 = new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				fighterLeftImage = loadJLabel("characters/" + player1.getSelectedItem() + ".png");
+			}
+		};
             
 		headLeft.setName("headLeft");
 		torsoLeft.setName("torsoLeft");
@@ -220,6 +237,14 @@ public class MainFrame extends JFrame {
 		headRight.addActionListener(fightButtonActionListener);
 		torsoRight.addActionListener(fightButtonActionListener);
 		legsRight.addActionListener(fightButtonActionListener);
+		
+		player1.addItemListener(comboBoxListenerPlayer1);
+		player2.addItemListener(comboBoxListenerPlayer1);
+
+		
+		
+		
+		
 		
 		// Default Implementations
 		setTitle						("Collosseum");
@@ -262,12 +287,10 @@ public class MainFrame extends JFrame {
 		hpPanelRight.setLayout			(new BorderLayout());
 		hpPanelRight.setOpaque			(false);
 		
-		
 		// Background
 		setContentPane					(background);
 		setLayout						(new BorderLayout());
 
-		
 		// adding Inputs to dropDownMenu
 		dropDownMenu.add				(player1);
 		dropDownMenu.add				(player2);
